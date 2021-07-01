@@ -1,0 +1,30 @@
+{
+  "name": "picovoice-browser-extension-builder",
+  "version": "1.0.0",
+  "description": "Picovoice Browser Extension Builder",
+  "main": "init.js",
+  "author": "Picovoice Inc.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "webpack"
+  },
+  "dependencies": {
+    "@picovoice/porcupine-web-en-worker": "^1.9.4",
+    "@picovoice/web-voice-processor": "^2.0.3",
+    "bootstrap": "^5.0.1",
+    "core-js": "^3.12.1",
+    "regenerator-runtime": "^0.13.7",
+    "webextension-polyfill-ts": "^0.25.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.14.0",
+    "@babel/preset-env": "^7.14.2",
+    "babel-loader": "^8.2.2",
+    "babel-plugin-transform-remove-strict-mode": "^0.0.2",
+    "copy-webpack-plugin": "^8.1.1",
+    "webpack": "^5.37.0",
+    "webpack-cli": "4.7.0"
+  }
+}

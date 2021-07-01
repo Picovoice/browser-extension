@@ -1,0 +1,37 @@
+{
+  "manifest_version": 2,
+  "name": "Voice AI Search Extension",
+  "version": "1.0.3",
+  "author": "Picovoice Inc",
+  "description": "Voice AI Search Extension",
+  "icons": {
+    "48": "icons/pico-blue-48.png",
+    "96": "icons/pico-blue-96.png"
+  },
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'; font-src 'self' data:;",
+  "permissions": ["<all_urls>", "tabs", "storage"],
+  "browser_action": {
+    "default_icon": "icons/pico-blue-96.png",
+    "default_title": "Toggle Wake Word On/Off",
+    "browser_style": true
+  },
+  "background": {
+    "page": "background/background.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["content/index.js"],
+      "css": ["content/content.css"]
+    }
+  ],
+  "commands": {
+    "simWakeWord": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y"
+      },
+      "description": "Simulate Wake Word"
+    }
+  }
+}
