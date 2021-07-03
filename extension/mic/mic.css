@@ -1,0 +1,28 @@
+body {
+  background-color: #377dff;
+  color: white;
+  font-family: sans-serif;
+}
+
+a {
+  color: white;
+}
+
+img {
+  width: 12rem;
+  margin-top: 10rem;
+  margin-bottom: 2rem;
+}
+
+.intro {
+  margin-top: 3rem;
+}
+
+h1 {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+h2 {
+  font-size: 1.25rem;
+}

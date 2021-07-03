@@ -1,0 +1,13 @@
+.transcript {
+  border: 1px solid white;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  background-color: #377dff;
+  color: white;
+  font-size: 2rem;
+  position: absolute;
+  z-index: 9999;
+  top: 0.5rem;
+  left: 0.5rem;
+  transition: all 0.3s ease;
+}

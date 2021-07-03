@@ -102,3 +102,12 @@ dist
 
 # TernJS port file
 .tern-port
+
+.DS_Store
+extension/mic/index.js
+extension/mic/index.js.map
+extension/bootstrap.min.css
+extension/content/index.js
+extension/content/index.js.map
+extension/background/index.js
+extension/background/index.js.map
