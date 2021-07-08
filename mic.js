@@ -18,7 +18,7 @@ for (const [language, value] of Object.entries(GOOGLE_SEARCH_LANGUAGES)) {
   document.getElementById("select-search-language").appendChild(optGroup);
 }
 
-const DEFAULT_SENSITIVITY = 0.5;
+const DEFAULT_SENSITIVITY = 50; // Sensitivity meter ranges from 0 to 100
 const DEFAULT_WAKE_WORD = "Okay Google";
 const DEFAULT_GOOGLE_VOICE_SEARCH_LANGUAGE = "en-US";
 const STRINGS_READY = "Porcupine is ready and listening for the wake word.";
