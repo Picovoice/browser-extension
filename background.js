@@ -185,6 +185,7 @@ const init = async () => {
   if (dataMicOn.micOn === undefined) {
     await browser.storage.local.set({ micOn: true });
     micOnInit = true;
+    browserAction();
   } else {
     micOnInit = dataMicOn.micOn;
     browserAction();
