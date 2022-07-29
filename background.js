@@ -1,7 +1,6 @@
 import { browser } from "webextension-polyfill-ts";
 
-const GOOGLE_SEARCH_QUERY_URL = "http://google" +
-  ".com/search?q=";
+const GOOGLE_SEARCH_QUERY_URL = "http://google.com/search?q=";
 
 let micTabId = -1;
 let extensionState = "init";
