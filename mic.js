@@ -3,6 +3,13 @@ import { WebVoiceProcessor } from "@picovoice/web-voice-processor";
 import { browser } from "webextension-polyfill-ts";
 
 import { GOOGLE_SEARCH_LANGUAGES } from "./google_search_languages.js";
+import {
+  ACCESS_KEY,
+  OK_GOOGLE,
+  HEY_GOOGLE,
+  PICOVOICE,
+  PORCUPINE
+} from "./constants.js";
 
 for (const [language, value] of Object.entries(GOOGLE_SEARCH_LANGUAGES)) {
   const optGroup = document.createElement("optgroup");
@@ -11,7 +18,7 @@ for (const [language, value] of Object.entries(GOOGLE_SEARCH_LANGUAGES)) {
   for (const [country, code] of value) {
     const option = document.createElement("option");
     option.value = code;
-    option.label = `${country} (${code})`; // e.g. "USA (en-US)"
+    option.label = `${country} (${code})` ; // e.g. "USA (en-US)"
     optGroup.appendChild(option);
   }
 
@@ -19,10 +26,19 @@ for (const [language, value] of Object.entries(GOOGLE_SEARCH_LANGUAGES)) {
 }
 
 const DEFAULT_SENSITIVITY = 50; // Sensitivity meter ranges from 0 to 100
-const DEFAULT_WAKE_WORD = "Okay Google";
+const DEFAULT_WAKE_WORD = "Picovoice";
 const DEFAULT_GOOGLE_VOICE_SEARCH_LANGUAGE = "en-US";
 const STRINGS_READY = "Porcupine is ready and listening for the wake word.";
 const STRINGS_INITIALIZING = "Initializing Porcupine...";
+
+const KEYWORD_MAP = {
+  "Ok Google": OK_GOOGLE,
+  "Hey Google": HEY_GOOGLE,
+  "Picovoice": PICOVOICE,
+  "Porcupine": PORCUPINE
+}
+
+const chime = new Audio(browser.runtime.getURL("audio/click.ogg"));
 
 let ppnStatus = "unknown";
 
@@ -52,7 +68,7 @@ async function getOptionsFromStorage() {
   const data1 = await browser.storage.local.get("wakeWord");
   let wakeWord;
 
-  if (data1.wakeWord === undefined) {
+  if (data1.wakeWord === undefined || KEYWORD_MAP[data1.wakeWord] === undefined) {
     await browser.storage.local.set({ wakeWord: DEFAULT_WAKE_WORD });
     wakeWord = DEFAULT_WAKE_WORD;
   } else {
@@ -86,17 +102,17 @@ async function getOptionsFromStorage() {
 document.getElementById("select-wake-word").onchange = async (event) => {
   const newWakeWord = event.target.value;
   await browser.storage.local.set({ wakeWord: newWakeWord });
-  startPorcupine();
+  await startPorcupine();
 };
 document.getElementById("input-sensitivity").onchange = async (event) => {
   const newSensitivity = event.target.value;
   await browser.storage.local.set({ sensitivity: newSensitivity });
-  startPorcupine();
+  await startPorcupine();
 };
 document.getElementById("select-search-language").onchange = async (event) => {
   const newSearchLanguage = event.target.value;
   await browser.storage.local.set({ searchLanguage: newSearchLanguage });
-  startPorcupine();
+  await startPorcupine();
 };
 
 function setPpnStatus(status, message) {
@@ -144,13 +160,18 @@ async function startPorcupine() {
   const sensitivityNormalized = sensitivity / 100.0;
 
   setPpnStatus("init");
+  console.log(wakeWord)
 
   let ppnWorker;
   try {
-    ppnWorker = await PorcupineWorkerFactory.create({
-      builtin: wakeWord,
-      sensitivity: sensitivityNormalized,
-    });
+    ppnWorker = await PorcupineWorkerFactory.create(
+      ACCESS_KEY,
+      {
+        custom: wakeWord,
+        sensitivity: sensitivityNormalized,
+        base64: KEYWORD_MAP[wakeWord]
+      }
+    );
   } catch (error) {
     setPpnStatus("error", error);
     console.error(error);
@@ -178,7 +199,6 @@ async function startPorcupine() {
       command: "error",
     });
     console.error(error);
-    return;
   }
 
   ppnWorker.onmessage = (messageEvent) => {
@@ -188,6 +208,7 @@ async function startPorcupine() {
         return;
       }
 
+      chime.play();
       setPpnStatus("keyword");
 
       browser.runtime.sendMessage({ ...messageEvent.data });

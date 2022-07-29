@@ -1,112 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Voice AI Extension - Microphone</title>
-    <link rel="stylesheet" href="../bootstrap.min.css" />
-    <link rel="stylesheet" href="./mic.css" />
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <title>Voice AI Extension - Microphone</title>
+  <link rel="stylesheet" href="../bootstrap.min.css" />
+  <link rel="stylesheet" href="./mic.css" />
+</head>
 
-  <body>
-    <div class="container intro">
-      <div class="row">
-        <div class="col">
-          <h1>Voice AI Extension</h1>
-          <div class="alert alert-info">
-            <p>
-              🎤 Keep this tab open to allow the extension to access the
-              microphone for voice processing.
-            </p>
-            <small>
-              This Browser Extension requires a dedicated tab, so that
-              microphone permissions can be asked for with user consent. This
-              tab will automatically open and close when you toggle the
-              extension on and off using its extension icon.
-            </small>
-          </div>
-          <div class="alert alert-info">
-            <p>
-              🔐 While listening for the wake word, all audio processing is done
-              locally on your computer, and your microphone data is 100%
-              private. When using the follow-on Google Voice Search, Chrome
-              sends the audio data to Google's cloud API for processing.
-            </p>
-          </div>
-        </div>
+<body>
+<div class="container intro">
+  <div class="row">
+    <div class="col">
+      <h1>Voice AI Extension</h1>
+      <div class="alert alert-info">
+        <p>
+          🎤 Keep this tab open to allow the extension to access the
+          microphone for voice processing.
+        </p>
+        <small>
+          This Browser Extension requires a dedicated tab, so that
+          microphone permissions can be asked for with user consent. This
+          tab will automatically open and close when you toggle the
+          extension on and off using its extension icon.
+        </small>
       </div>
-      <div class="row">
-        <div class="col">
-          <div id="alert-status" class="alert alert-success">Loading...</div>
-        </div>
+      <div class="alert alert-info">
+        <p>
+          🔐 While listening for the wake word, all audio processing is done
+          locally on your computer, and your microphone data is 100%
+          private. When using the follow-on Google Voice Search, Chrome
+          sends the audio data to Google's cloud API for processing.
+        </p>
       </div>
     </div>
-
-    <div class="container options">
-      <div class="row">
-        <h2>Options</h2>
-
-        <div class="col col-xs-12 col-md-6">
-          <label for="select-wake-word" class="form-label">Wake Word</label>
-          <select
-            disabled
-            id="select-wake-word"
-            class="form-select"
-            aria-label="Select the wake word to activate search"
-          >
-            <option selected value="Okay Google">Okay Google</option>
-            <option value="Alexa">Alexa</option>
-            <option value="Americano">Americano</option>
-            <option value="Blueberry">Blueberry</option>
-            <option value="Bumblebee">Bumblebee</option>
-            <option value="Computer">Computer</option>
-            <option value="Grapefruit">Grapefruit</option>
-            <option value="Grasshopper">Grasshopper</option>
-            <option value="Hey Google">Hey Google</option>
-            <option value="Hey Siri">Hey Siri</option>
-            <option value="Jarvis">Jarvis</option>
-            <option value="Picovoice">Picovoice</option>
-            <option value="Porcupine">Porcupine</option>
-            <option value="Terminator">Terminator</option>
-          </select>
-        </div>
-        <div class="col col-xs-12 col-md-6">
-          <label for="input-sensitivity" class="form-label">Sensitivity</label>
-          <input
-            disabled
-            type="range"
-            class="form-range"
-            id="input-sensitivity"
-          />
-        </div>
-      </div>
-      <br />
-      <div class="row">
-        <div class="col col-xs-12 col-md-6">
-          <label for="select-search-language" class="form-label"
-            >Google Voice Search Language</label
-          >
-          <select
-            disabled
-            id="select-search-language"
-            class="form-select"
-            aria-label="Select Google Voice Search Language"
-          ></select>
-        </div>
-      </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div id="alert-status" class="alert alert-success">Loading...</div>
     </div>
+  </div>
+</div>
 
-    <div class="container footer">
-      <div class="row">
-        <div class="col text-center">
-          <a
-            href="https://picovoice.ai"
-            rel="noopener noreferrer"
-            target="_blank"
-            ><img src="../powered_by_pv.svg"
-          /></a>
-        </div>
-      </div>
+<div class="container options">
+  <div class="row">
+    <h2>Options</h2>
+
+    <div class="col col-xs-12 col-md-6">
+      <label for="select-wake-word" class="form-label">Wake Word</label>
+      <select
+              disabled
+              id="select-wake-word"
+              class="form-select"
+              aria-label="Select the wake word to activate search"
+      >
+        <option value="Ok Google">Ok Google</option>
+        <option value="Hey Google">Hey Google</option>
+        <option selected value="Picovoice">Picovoice</option>
+        <option value="Porcupine">Porcupine</option>
+      </select>
     </div>
-    <script src="./index.js"></script>
-  </body>
+    <div class="col col-xs-12 col-md-6">
+      <label for="input-sensitivity" class="form-label">Sensitivity</label>
+      <input
+              disabled
+              type="range"
+              class="form-range"
+              id="input-sensitivity"
+      />
+    </div>
+  </div>
+  <br />
+  <div class="row">
+    <div class="col col-xs-12 col-md-6">
+      <label for="select-search-language" class="form-label"
+      >Google Voice Search Language</label
+      >
+      <select
+              disabled
+              id="select-search-language"
+              class="form-select"
+              aria-label="Select Google Voice Search Language"
+      ></select>
+    </div>
+  </div>
+</div>
+
+<div class="container footer">
+  <div class="row">
+    <div class="col text-center">
+      <a
+              href="https://picovoice.ai"
+              rel="noopener noreferrer"
+              target="_blank"
+      ><img src="../powered_by_pv.svg"
+      /></a>
+    </div>
+  </div>
+</div>
+<script src="./index.js"></script>
+</body>
 </html>

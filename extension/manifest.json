@@ -1,22 +1,27 @@
 {
   "manifest_version": 3,
   "name": "Voice AI Search Extension",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "author": "Picovoice Inc",
   "description": "Voice AI Search Extension",
   "icons": {
     "48": "icons/pico-blue-48.png",
     "96": "icons/pico-blue-96.png"
   },
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'; font-src 'self' data:;",
-  "permissions": ["<all_urls>", "tabs", "storage"],
-  "browser_action": {
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; font-src 'self' data:;"
+  },
+  "host_permissions": [
+    "*://*/*"
+  ],
+  "permissions": ["tabs", "storage"],
+  "action": {
     "default_icon": "icons/pico-blue-96.png",
     "default_title": "Toggle Wake Word On/Off",
     "browser_style": true
   },
   "background": {
-    "page": "background/background.html"
+    "service_worker": "background/index.js"
   },
   "content_scripts": [
     {
