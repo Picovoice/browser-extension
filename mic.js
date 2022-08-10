@@ -154,6 +154,8 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+let ppnWorker = null, webVp = null;
+
 async function startPorcupine() {
   const { wakeWord, sensitivity, searchLanguage } =
     await getOptionsFromStorage();
@@ -162,7 +164,15 @@ async function startPorcupine() {
   setPpnStatus("init");
   console.log(wakeWord)
 
-  let ppnWorker;
+  if (ppnWorker !== null) {
+    ppnWorker.terminate();
+    ppnWorker = null;
+  }
+  if (webVp !== null) {
+    webVp.release();
+    webVp = null;
+  }
+
   try {
     ppnWorker = await PorcupineWorkerFactory.create(
       ACCESS_KEY,
@@ -189,7 +199,7 @@ async function startPorcupine() {
   });
 
   try {
-    const webVp = await WebVoiceProcessor.init({
+    webVp = await WebVoiceProcessor.init({
       engines: [ppnWorker],
       start: true,
     });

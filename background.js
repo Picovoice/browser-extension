@@ -8,6 +8,8 @@ let extensionState = "init";
 const MIC_EXTENSION_URL = browser.runtime.getURL("/mic/mic.html");
 let micOnInit;
 
+const urlRegex = new RegExp("chrome.*\:\/\/.*");
+
 async function updateIcon(condition) {
   let path = "../icons/pico-blue-16.png";
   switch (condition) {
@@ -91,11 +93,12 @@ browser.runtime.onMessage.addListener(async (request) => {
       break;
     case "ppn-keyword":
       updateIcon("wake");
+      messageActiveTab("[Say your search query]");
       break;
     case "wsr-onend":
-
       // If the user said something, open a Google search tab with their query
       if (request.transcript !== undefined) {
+        messageActiveTab(request.transcript.trim());
         const encodedQueryParams = encodeURIComponent(
           request.transcript.trim()
         );
@@ -108,6 +111,9 @@ browser.runtime.onMessage.addListener(async (request) => {
       await setExtensionState("on");
       break;
     case "wsr-onresult":
+      if (request.transcript !== undefined) {
+        messageActiveTab(request.transcript.trim());
+      }
       break;
   }
 });
@@ -119,9 +125,7 @@ browser.commands.onCommand.addListener((command) => {
   switch (command) {
     case "simWakeWord":
     {
-      const message = {
-        command: "ppn-keyword",
-      };
+      messageActiveTab("[Say your search query]");
     }
       break;
     default:
@@ -129,6 +133,38 @@ browser.commands.onCommand.addListener((command) => {
       break;
   }
 });
+
+async function messageActiveTab(message) {
+  const activeTabs = await browser.tabs.query({
+    currentWindow: true,
+    active: true,
+  });
+
+  for (const activeTab of activeTabs) {
+    if (!urlRegex.test(activeTab.url)) {
+      browser.scripting.executeScript({
+        target: {tabId: activeTab.id},
+        func: writeMessage,
+        args: [message]
+      });
+    }
+  }
+}
+
+function writeMessage(message) {
+  let element = document.getElementById("pv_transcript");
+  if (element === null) {
+    element = document.createElement("div");
+    element.className = "transcript";
+    element.id = "pv_transcript";
+    document.body.appendChild(element);
+  }
+  element.innerHTML = message;
+  clearInterval(element.timeout);
+  element.timeout = setTimeout(() => {
+    element.remove();
+  }, 3000);
+}
 
 async function closeMicTab() {
   // Although we're tracking the micTabId,

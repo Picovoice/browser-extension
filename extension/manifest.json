@@ -12,9 +12,9 @@
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; font-src 'self' data:;"
   },
   "host_permissions": [
-    "*://*/*"
+    "<all_urls>"
   ],
-  "permissions": ["tabs", "storage"],
+  "permissions": ["tabs", "storage", "activeTab", "scripting"],
   "action": {
     "default_icon": "icons/pico-blue-96.png",
     "default_title": "Toggle Wake Word On/Off",
@@ -26,7 +26,6 @@
   "content_scripts": [
     {
       "matches": ["*://*/*"],
-      "js": ["content/index.js"],
       "css": ["content/content.css"]
     }
   ],
