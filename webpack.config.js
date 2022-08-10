@@ -8,7 +8,6 @@ export default {
   mode: "production",
   entry: {
     background: "./background.js",
-    content: "./content.js",
     mic: "./mic.js",
   },
   output: {

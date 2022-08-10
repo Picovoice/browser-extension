@@ -2,41 +2,42 @@ import { browser } from "webextension-polyfill-ts";
 
 const GOOGLE_SEARCH_QUERY_URL = "http://google.com/search?q=";
 
-const chimeSfx = document.getElementById("chime");
 let micTabId = -1;
 let extensionState = "init";
 
 const MIC_EXTENSION_URL = browser.runtime.getURL("/mic/mic.html");
 let micOnInit;
 
+const urlRegex = new RegExp("chrome.*\:\/\/.*");
+
 async function updateIcon(condition) {
-  let path = "../icons/pico-blue.svg";
+  let path = "../icons/pico-blue-16.png";
   switch (condition) {
     case "init":
-      path = "../icons/pico-grey-48.png";
+      path = "../icons/pico-grey-16.png";
       break;
     case "on":
-      path = "../icons/pico-blue.svg";
+      path = "../icons/pico-blue-16.png";
       break;
     case "wake":
-      path = "../icons/pico-teal.svg";
+      path = "../icons/pico-teal-16.png";
       break;
     case "mic-error":
-      path = "../icons/pico-pink.svg";
+      path = "../icons/pico-pink-16.png";
       break;
     case "off":
-      path = "../icons/pico-grey-48.png";
+      path = "../icons/pico-grey-16.png";
       break;
     default:
       break;
   }
 
-  await browser.browserAction.setIcon({ path: path });
+  await browser.action.setIcon({ path: path });
 }
 
 const setExtensionState = async (newState) => {
   extensionState = newState;
-  browser.browserAction.setBadgeText({ text: extensionState });
+  browser.action.setBadgeText({ text: extensionState });
 
   if (newState === "off") {
     await browser.storage.local.set({ micOn: false });
@@ -45,7 +46,7 @@ const setExtensionState = async (newState) => {
   updateIcon(extensionState);
 };
 
-const browserAction = async (event) => {
+const action = async (event) => {
   switch (extensionState) {
     case "init":
       if (micOnInit) {
@@ -72,7 +73,7 @@ const browserAction = async (event) => {
 };
 
 /** Respond to user clicking the extension icon (i.e. toggling on/off) */
-browser.browserAction.onClicked.addListener(browserAction);
+browser.action.onClicked.addListener(action);
 
 /** Listen for tab closing (for Mic tab) */
 browser.tabs.onRemoved.addListener(async (tabId) => {
@@ -92,15 +93,12 @@ browser.runtime.onMessage.addListener(async (request) => {
       break;
     case "ppn-keyword":
       updateIcon("wake");
-      chimeSfx.play();
-      // Forward the keyword event to the active tab
-      messageActiveTab({ ...request });
+      messageActiveTab("[Say your search query]");
       break;
     case "wsr-onend":
-      messageActiveTab({ ...request });
-
       // If the user said something, open a Google search tab with their query
       if (request.transcript !== undefined) {
+        messageActiveTab(request.transcript.trim());
         const encodedQueryParams = encodeURIComponent(
           request.transcript.trim()
         );
@@ -113,23 +111,22 @@ browser.runtime.onMessage.addListener(async (request) => {
       await setExtensionState("on");
       break;
     case "wsr-onresult":
-      messageActiveTab({ ...request });
+      if (request.transcript !== undefined) {
+        messageActiveTab(request.transcript.trim());
+      }
       break;
   }
 });
 
 /** Receive keyboard shortcut commands from browser
-    Simulate voice events for testing purposes
-    (or, for push-to-talk experience) */
+ Simulate voice events for testing purposes
+ (or, for push-to-talk experience) */
 browser.commands.onCommand.addListener((command) => {
   switch (command) {
     case "simWakeWord":
-      {
-        const message = {
-          command: "ppn-keyword",
-        };
-        messageActiveTab(message);
-      }
+    {
+      messageActiveTab("[Say your search query]");
+    }
       break;
     default:
       console.log("Unhandled command: " + command);
@@ -137,7 +134,6 @@ browser.commands.onCommand.addListener((command) => {
   }
 });
 
-/** Query for the active tab(s) and send it(them) a message */
 async function messageActiveTab(message) {
   const activeTabs = await browser.tabs.query({
     currentWindow: true,
@@ -145,8 +141,29 @@ async function messageActiveTab(message) {
   });
 
   for (const activeTab of activeTabs) {
-    await browser.tabs.sendMessage(activeTab.id, message);
+    if (!urlRegex.test(activeTab.url)) {
+      browser.scripting.executeScript({
+        target: {tabId: activeTab.id},
+        func: writeMessage,
+        args: [message]
+      });
+    }
   }
+}
+
+function writeMessage(message) {
+  let element = document.getElementById("pv_transcript");
+  if (element === null) {
+    element = document.createElement("div");
+    element.className = "transcript";
+    element.id = "pv_transcript";
+    document.body.appendChild(element);
+  }
+  element.innerHTML = message;
+  clearInterval(element.timeout);
+  element.timeout = setTimeout(() => {
+    element.remove();
+  }, 3000);
 }
 
 async function closeMicTab() {
@@ -185,10 +202,10 @@ const init = async () => {
   if (dataMicOn.micOn === undefined) {
     await browser.storage.local.set({ micOn: true });
     micOnInit = true;
-    browserAction();
+    action();
   } else {
     micOnInit = dataMicOn.micOn;
-    browserAction();
+    action();
   }
 };
 
