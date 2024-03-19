@@ -29,7 +29,7 @@ export default {
                   modules: false,
                   useBuiltIns: "usage",
                   corejs: 3,
-                  targets: { chrome: "57" },
+                  targets: { chrome: "100" },
                 },
               ],
             ],

@@ -41,6 +41,7 @@ const KEYWORD_MAP = {
 const chime = new Audio(browser.runtime.getURL("audio/click.ogg"));
 
 let ppnStatus = "unknown";
+WebVoiceProcessor.setOptions({ customRecorderProcessorURL: "/mic/recorder_processor.js" });
 
 async function init() {
   await initializeUiValues();
@@ -165,12 +166,9 @@ async function startPorcupine() {
   console.log(wakeWord)
 
   if (ppnWorker !== null) {
+    await WebVoiceProcessor.unsubscribe(ppnWorker);
     ppnWorker.terminate();
     ppnWorker = null;
-  }
-  if (webVp !== null) {
-    webVp.release();
-    webVp = null;
   }
 
   try {
@@ -199,10 +197,7 @@ async function startPorcupine() {
   });
 
   try {
-    webVp = await WebVoiceProcessor.init({
-      engines: [ppnWorker],
-      start: true,
-    });
+    await WebVoiceProcessor.subscribe(ppnWorker);
   } catch (error) {
     setPpnStatus("error", error);
     browser.runtime.sendMessage({
