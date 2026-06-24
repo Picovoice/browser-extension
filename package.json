@@ -19,7 +19,7 @@
     "webextension-polyfill-ts": "^0.26.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.18.2",
+    "@babel/core": "^7.29.6",
     "@babel/preset-env": "^7.18.2",
     "@picovoice/web-utils": "^1.1.4",
     "babel-loader": "^8.2.5",
