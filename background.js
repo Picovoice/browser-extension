@@ -1,6 +1,6 @@
 import { browser } from "webextension-polyfill-ts";
 
-const GOOGLE_SEARCH_QUERY_URL = "http://google.com/search?q=";
+const GOOGLE_SEARCH_QUERY_URL = "https://www.google.com/search?q=";
 
 let micTabId = -1;
 let extensionState = "init";
@@ -102,9 +102,10 @@ browser.runtime.onMessage.addListener(async (request) => {
         const encodedQueryParams = encodeURIComponent(
           request.transcript.trim()
         );
-        browser.tabs.create({
-          url: `${GOOGLE_SEARCH_QUERY_URL}${encodedQueryParams}`,
-        });
+        const searchUrl = `${GOOGLE_SEARCH_QUERY_URL}${encodedQueryParams}`;
+        if (searchUrl.startsWith(GOOGLE_SEARCH_QUERY_URL)) {
+          browser.tabs.create({ url: searchUrl });
+        }
       }
 
       // Back to idle state
